@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from functools import wraps 
+from .models import User
 # Create your views here.
 
 def role_required(allowed_roles):
@@ -20,6 +21,7 @@ def role_required(allowed_roles):
 def home(request):
     return render(request, 'index.html')
 
+
 def forbidenpage(request):
     return render(request, '401.html')
 
@@ -28,8 +30,20 @@ def loginuser(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
+            login_input = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+
+
+            if '@' in login_input:
+                try:
+                    # Get the user by email
+                    user = User.objects.get(email=login_input)
+                    username = user.username
+                except User.DoesNotExist:
+                    messages.error(request, "Invalid email or password.")
+                    return render(request, 'login.html', {'form': form})
+            else:
+                username = login_input  # Treat as username
 
             user = authenticate(request, username=username, password=password)
             
@@ -44,11 +58,15 @@ def loginuser(request):
             else:
                 messages.error(request, "Invalid email or password.")
         else:
-            messages.error(request, "Invalid form submission.")
+            messages.er# This logs out the userror(request, "Invalid form submission.")
     else:
         form = LoginForm()  
     return render(request, 'login.html', {'form': form})
 
+@login_required
+def logoutuser(request):
+    logout(request)  # This logs out the user
+    return redirect('home')
 
 @role_required(['ADMIN'])
 def adminhome(request):
