@@ -26,7 +26,7 @@ def set_default_user():
 # Create your models here.
 class User(AbstractUser):
     class Role(models.TextChoices):
-        MCOLLECTOR = "Money Collector", "MCollector"
+        MCOLLECTOR = "MCOLLECTOR", "Money Collector"
         ADMIN = "ADMIN", "Admin"
     
     # base_role = Role.ADMIN
