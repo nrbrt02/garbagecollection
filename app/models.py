@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser, Permission, BaseUserManager
-
+from django.contrib.auth.hashers import make_password
 
 
 street_regex = RegexValidator(
@@ -29,7 +29,7 @@ class User(AbstractUser):
         MCOLLECTOR = "Money Collector", "MCollector"
         ADMIN = "ADMIN", "Admin"
     
-    base_role = Role.ADMIN
+    # base_role = Role.ADMIN
 
     role = models.CharField(max_length=50, choices=Role.choices)
     phone_number = models.CharField(validators=[phone_regex], max_length=13, unique=True, null=True)
@@ -48,9 +48,9 @@ class User(AbstractUser):
     )
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            self.role = self.base_role
-            return super().save(*args, **kwargs)
+        if self.pk is None or not self.password.startswith('pbkdf2_'):
+            self.password = make_password(self.password)
+        super().save(*args, **kwargs)
 
 
 class Location(models.Model):
