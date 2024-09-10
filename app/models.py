@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser, Permission, BaseUserManager
 from django.contrib.auth.hashers import make_password
+from django.db.models import UniqueConstraint
 
 
 street_regex = RegexValidator(
@@ -47,20 +48,53 @@ class User(AbstractUser):
         help_text='Specific permissions for this user.'
     )
 
-    def save(self, *args, **kwargs):
-        if self.pk is None or not self.password.startswith('pbkdf2_'):
-            self.password = make_password(self.password)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.pk is None or not self.password.startswith('pbkdf2_'):
+    #         self.password = make_password(self.password)
+    #     super().save(*args, **kwargs)
+
+
+class District(models.Model):
+    name = models.CharField(max_length=40)
+
+    def __str__(self):
+        return self.name
+
+class Sector(models.Model):
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
+    name = models.CharField(max_length=40)
+
+    def __str__(self):
+        return self.name
+
+class Cell(models.Model):
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
+    sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
+    name = models.CharField(max_length=40)
+
+    def __str__(self):
+        return self.name
+
+class Village(models.Model):
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
+    sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
+    cell = models.ForeignKey(Cell, on_delete=models.CASCADE)
+    name = models.CharField(max_length=40)
+
+    def __str__(self):
+        return self.name
+
 
 
 class Location(models.Model):
-    district = models.CharField(max_length=254)
-    sector = models.CharField(max_length=254)
-    cell = models.CharField(max_length=254)
-    village = models.CharField(max_length=254, unique=True)
+    district = models.ForeignKey(District, on_delete=models.SET_NULL, null=True, blank=True)
+    sector = models.ForeignKey(Sector, on_delete=models.SET_NULL, null=True, blank=True)
+    cell = models.ForeignKey(Cell, on_delete=models.SET_NULL, null=True, blank=True)
+    village = models.ForeignKey(Village, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        constraints = [UniqueConstraint(fields=['district', 'sector', 'cell', 'village'], name='unique_location_combination')]
         ordering = ["created_at"]
     
     def __str__(self):
@@ -68,10 +102,14 @@ class Location(models.Model):
 
 class Residence(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    streetName = models.CharField(validators=[street_regex], max_length=9, unique=True)
+    streetName = models.CharField(validators=[street_regex], max_length=9)
     gateNumber = models.CharField(max_length=10, null=True, blank=True)
     status = models.BooleanField(default = 1)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [UniqueConstraint(fields=['location', 'streetName', 'gateNumber'], name='unique_residence_combination')]
+        ordering = ["created_at"]
 
     def __str__(self):
         return f"{self.location} - {self.streetName}"
@@ -134,6 +172,7 @@ class Feedback(models.Model):
     message = models.TextField()
     client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])  # Rating between 1 and 5
+    post_status = models.BooleanField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

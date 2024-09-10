@@ -1,0 +1,51 @@
+{% load static %}
+{% include 'adminn/includes/header.html' %}
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Dashboard</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item"><a href="{% url 'admin-home' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Schedule</li>
+                        </ol>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                New Client
+                            </div>
+
+                            <div class="card-body">
+                                <form method="POST" class="row">
+                                    {% csrf_token %}
+                                    <div class="col-md-3">
+                                      <label for="week" class="form-label">Week:</label>
+                                      {{ form.week }}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="location" class="form-label">Location:</label>
+                                        {{ form.location }}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="driver" class="form-label">Driver:</label>
+                                        {{ form.driver }}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="plate" class="form-label">Vehicle:</label>
+                                        {{ form.plate }}
+                                    </div>
+
+                                    <div class="col-md-12 mt-3">
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
+                                      </div>
+                                </form>
+
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                </main>
+{% include 'adminn/includes/footer.html' %}

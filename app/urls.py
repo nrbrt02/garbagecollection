@@ -8,6 +8,23 @@ urlpatterns = [
 
 
     path('adminn/', views.adminhome, name="admin-home"),
+    path('locations/', views.locations, name="locations"),
+    path('locations/load-sectors/', views.load_sectors, name="load_sectors"),
+    path('locations/load-cells/', views.load_cells, name="load_cells"),
+    path('locations/load-villages/', views.load_villages, name="load_villages"),
+
+    path('residence/', views.residence, name="residence"),
+    path('residence/<int:pk>', views.editResidence, name="edit-residence"),
+    path('residence/status/<int:pk>', views.changeResidence, name="change-residence"),
+
+    path('clients/', views.clients, name="clients"),
+    path('schedule/', views.schedule, name="schedule"),
+    path('collection/', views.collection, name="collection"),
+    path('overflow/', views.overflow, name="overflow"),
+
+    path('feedbacks/', views.feedbacks, name="feedbacks"),
+    path('feedbacks/unpost/<int:pk>', views.unpostfeedbacks, name="unpost-feedback"),
+    path('feedbacks/post/<int:pk>', views.postfeedbacks, name="post-feedbacks"),
     
     
     path('money-collector/', views.mcollectorhome, name="money-collector-home"),

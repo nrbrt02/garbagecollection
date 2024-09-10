@@ -1,0 +1,102 @@
+{% load static %}
+{% include 'adminn/includes/header.html' %}
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Locations</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active"><a href="{% url 'admin-home' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Locations</li>
+                        </ol>
+    
+                        {% if messages %}
+                        {% for message in messages %}
+                        {% if message.tags == 'error'%}
+                        <div class="alert alert-danger" role="alert">
+                            {{ message }}.
+                        </div>
+                        {% else %}
+                        <div class="alert alert-success" role="alert">
+                            {{ message }}.
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                New Location
+                            </div>
+
+                            <div class="card-body">
+
+                                    <form class="row" method="post">
+                                      {% csrf_token %}
+                                      <div class="col-md-3">
+                                        <label for="district" class="form-label">District:</label>
+                                        {{ form.district }}
+                                      </div>
+                                      <div class="col-md-3">
+                                        <label for="sector" class="form-label">Sector:</label>
+                                        {{ form.sector }}
+                                      </div>
+                                     <div class="col-md-3">
+                                        <label for="cell" class="form-label">Cell:</label>
+                                        {{ form.cell }}
+                                      </div>
+                                      <div class="col-md-3">
+                                        <label for="village" class="form-label">Village:</label>
+                                        {{ form.village }}
+                                      </div>
+                                      <div class="col-md-12 mt-3">
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
+                                      </div>
+                                    </form>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                          <div class="card-header">
+                              <i class="fas fa-table me-1"></i>
+                              All Locations
+                          </div>
+                          <div class="card-body">
+                            <table id="datatablesSimple">
+                              <thead>
+                                  <tr>
+                                      <th>District</th>
+                                      <th>Sector</th>
+                                      <th>Cell</th>
+                                      <th>Village</th>
+                                      <th>Created</th>
+                                  </tr>
+                              </thead>
+                              <tfoot>
+                                <tr>
+                                  <th>District</th>
+                                  <th>Sector</th>
+                                  <th>Cell</th>
+                                  <th>Village</th>
+                                  <th>Created</th>
+                              </tr>
+                              </tfoot>
+                              <tbody>
+                                  {% for location in locations %}
+                                  <tr>
+                                      <td>{{ location.district }}</td>
+                                      <td>{{ location.sector }}</td>
+                                      <td>{{ location.cell }}</td>
+                                      <td>{{ location.village }}</td>
+                                      <td>{{ location.created_at | timesince }}</td>
+                                  </tr>
+                                  {% endfor %}
+                              </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+{% include 'adminn/includes/footer.html' %}

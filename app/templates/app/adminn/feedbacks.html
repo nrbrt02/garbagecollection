@@ -1,0 +1,63 @@
+{% load static %}
+{% include 'adminn/includes/header.html' %}
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Feedbacks</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item"><a href="{% url 'admin-home' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Feedbacks</li>
+                        </ol>
+    
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                All Feedbacks
+                            </div>
+
+                            <div class="card-body">
+                                <table id="datatablesSimple">
+                                    <thead>
+                                        <tr>
+                                            <th>E-mail</th>
+                                            <th>Message</th>
+                                            <th>Client</th>
+                                            <th>Rating</th>
+                                            <th>Posted</th>
+                                            <th>At</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>E-mail</th>
+                                            <th>Message</th>
+                                            <th>Client</th>
+                                            <th>Rating</th>
+                                            <th>Posted</th>
+                                            <th>At</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        {% for feedback in feedbacks %}
+                                        <tr>
+                                            <td>{{ feedback.email }}</td>
+                                            <td>{{ feedback.message }}</td>
+                                            <td>{{ feedback.client }}</td>
+                                            <td>{{ feedback.rating }}</td>
+                                            {% if feedback.post_status %}
+                                                <td><a href="{% url 'post-feedback' feedback.id %}"><p class="text-danger">Unpost</p></a></td>
+                                            {% else %}
+                                                <td><a href="{% url 'unpost-feedback' feedback.id %}"><span>Post</span></a></td>
+                                            {% endif %}
+                                            <td>{{ feedback.created_at | timesince }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </main>
+{% include 'adminn/includes/footer.html' %}

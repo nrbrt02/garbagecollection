@@ -1,0 +1,51 @@
+{% load static %}
+{% include 'adminn/includes/header.html' %}
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Dashboard</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item"><a href="{% url 'admin-home' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Collections</li>
+                        </ol>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                New Colletion
+                            </div>
+
+                            <div class="card-body">
+                                <form method="POST" class="row">
+                                    {% csrf_token %}
+                                    <div class="col-md-3">
+                                      <label for="schedule" class="form-label">Schedule:</label>
+                                      {{ form.schedule }}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="client" class="form-label">Client:</label>
+                                        {{ form.client }}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="approved_by" class="form-label">Approved By:</label>
+                                        {{ form.approved_by }}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="status" class="form-label">Status:</label><br>
+                                        {{ form.status }}
+                                    </div>
+
+                                    <div class="col-md-12 mt-3">
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
+                                      </div>
+                                </form>
+
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                </main>
+{% include 'adminn/includes/footer.html' %}

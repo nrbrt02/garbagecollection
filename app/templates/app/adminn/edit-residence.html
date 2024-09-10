@@ -1,0 +1,110 @@
+{% load static %}
+{% include 'adminn/includes/header.html' %}
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Edit Residence</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item"><a href="{% url 'admin-home' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item "><a href="{% url 'residence' %}">Residence</a></li>
+                            <li class="breadcrumb-item active">Edit</li>
+                        </ol>
+                        {% if messages %}
+                        {% for message in messages %}
+                        {% if message.tags == 'error'%}
+                        <div class="alert alert-danger" role="alert">
+                            {{ message }}.
+                        </div>
+                        {% else %}
+                        <div class="alert alert-success" role="alert">
+                            {{ message }}.
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                New Residence
+                            </div>
+
+                            <div class="card-body">
+                                <form method="POST" class="row">
+                                    {% csrf_token %}
+                                    <div class="col-md-3">
+                                      <label for="location" class="form-label">Location:</label>
+                                      {{ form.location }}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="streetName" class="form-label">Street Name:</label>
+                                        {{ form.streetName }}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="gateNumber" class="form-label">Gate Number:</label>
+                                        {{ form.gateNumber }}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="status" class="form-label">Status:</label><br>
+                                        {{ form.status }}
+                                    </div>
+                                    <div class="col-md-12 mt-3">
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
+                                      </div>
+                                </form>
+
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-4">
+                          <div class="card-header">
+                              <i class="fas fa-table me-1"></i>
+                              All Residences
+                          </div>
+                          <div class="card-body">
+                            <table id="datatablesSimple">
+                              <thead>
+                                  <tr>
+                                      <th>Location</th>
+                                      <th>Street</th>
+                                      <th>Gate</th>
+                                      <th>Active Status</th>
+                                      <th>Created</th>
+                                      <th>Edit</th>
+                                  </tr>
+                              </thead>
+                              <tfoot>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Street</th>
+                                    <th>Gate</th>
+                                    <th>Active Status</th>
+                                    <th>Created</th>
+                                    <th>Edit</th>
+                                </tr>
+                              </tfoot>
+                              <tbody>
+                                  {% for residence in residences %}
+                                  <tr>
+                                      <td>{{ residence.location }}</td>
+                                      <td>{{ residence.streetName }}</td>
+                                      <td>{{ residence.gateNumber }}</td>
+                                      {% if  residence.status %}
+                                        <td> Active &nbsp &nbsp<a href="{% url 'change-residence'  residence.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
+                                      {% else %}
+                                        <td> Unactive &nbsp &nbsp<a href="{% url 'change-residence'  residence.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>                                      
+                                      {% endif %}
+                                      <td>{{ residence.created_at | timesince }}</td>
+                                      <td>&nbsp &nbsp<a href="{% url 'edit-residence' residence.id %}"><i class="fa fa-pen"></i></a></td>
+                                  </tr>
+                                  {% endfor %}
+                              </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+{% include 'adminn/includes/footer.html' %}
