@@ -13,6 +13,8 @@ urlpatterns = [
     path('locations/load-cells/', views.load_cells, name="load_cells"),
     path('locations/load-villages/', views.load_villages, name="load_villages"),
 
+    path('change-status/<int:pk>', views.editResidence, name="edit-residence"),
+
     path('residence/', views.residence, name="residence"),
     path('residence/<int:pk>', views.editResidence, name="edit-residence"),
     path('residence/status/<int:pk>', views.changeResidence, name="change-residence"),

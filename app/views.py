@@ -183,12 +183,19 @@ def editResidence(request, pk):
 
 @role_required(['ADMIN'])
 def clients(request):
+    clients = Client.objects.all()
     if request.method == 'POST':
         form = ClientForm(request.POST)
+        if form.is_valid():
+            client = form.save()
+            messages.success(request, f"New Client {client} Added")
+            form = ClientForm()
+        else:
+            messages.error(request, f"{form.errors}")
     else:
         form = ClientForm()
 
-    context = {'form': form}
+    context = {'form': form, 'clients': clients}
     return render(request, 'adminn/clients.html', context)
 
 
