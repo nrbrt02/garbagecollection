@@ -3,28 +3,16 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Residence</h1>
+                        <h1 class="mt-4">Residences</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active"><a href="{% url 'admin-home' %}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Residence</li>
                         </ol>
-                        {% if messages %}
-                        {% for message in messages %}
-                        {% if message.tags == 'error'%}
-                        <div class="alert alert-danger" role="alert">
-                            {{ message }}.
-                        </div>
-                        {% else %}
-                        <div class="alert alert-success" role="alert">
-                            {{ message }}.
-                        </div>
-                        {% endif %}
-                        {% endfor %}
-                        {% endif %}
+{% include 'adminn/includes/errors.html' %}
 
                         <div class="card mb-4">
                             <div class="card-header">
-                                <i class="fas fa-table me-1"></i>
+                                <i class="fas fa-plus-circle me-1"></i>
                                 New Residence
                             </div>
 

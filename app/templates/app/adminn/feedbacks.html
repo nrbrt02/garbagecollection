@@ -8,7 +8,7 @@
                             <li class="breadcrumb-item"><a href="{% url 'admin-home' %}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Feedbacks</li>
                         </ol>
-    
+{% include 'adminn/includes/errors.html' %}
 
                         <div class="card mb-4">
                             <div class="card-header">
@@ -46,9 +46,9 @@
                                             <td>{{ feedback.client }}</td>
                                             <td>{{ feedback.rating }}</td>
                                             {% if feedback.post_status %}
-                                                <td><a href="{% url 'post-feedback' feedback.id %}"><p class="text-danger">Unpost</p></a></td>
+                                                <td><a href="{% url 'status-feedback' feedback.id %}"><p class="text-danger">Unpost</p></a></td>
                                             {% else %}
-                                                <td><a href="{% url 'unpost-feedback' feedback.id %}"><span>Post</span></a></td>
+                                                <td><a href="{% url 'status-feedback' feedback.id %}"><span>Post</span></a></td>
                                             {% endif %}
                                             <td>{{ feedback.created_at | timesince }}</td>
                                         </tr>

@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser, Permission, BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.db.models import UniqueConstraint
-
+import datetime
 
 street_regex = RegexValidator(
     regex=r'^K[KNG] \d{3} St$',
@@ -113,7 +113,7 @@ class Residence(models.Model):
 
     def __str__(self):
         return f"{self.location} - {self.streetName}"
-class Client(models.Model):
+class Clients(models.Model):
     names = models.CharField(max_length=254)
     phone = models.CharField(validators=[phone_regex], max_length=13, unique=True)
     email = models.EmailField(max_length=255, unique=True)
@@ -126,19 +126,22 @@ class Client(models.Model):
 
 class Schedule(models.Model):
     week = models.CharField(max_length=8)
+    day = models.CharField(max_length=20, choices=[('MONDAY', 'Monday'),('TUESDAY', 'Tuesday'),('WEDNESDAY', 'Wednesday'),('THURSDAY', 'Thursday'),('FRIDAY', 'Friday'),('SATURDAY', 'Saturday'),('SUNDAY', 'Sunday'), ],)
     location = models.ForeignKey(Location, on_delete=models.PROTECT)
     driver = models.CharField(max_length=254)
-    plate = models.CharField(validators=[plate_regex], max_length=9, unique=True)
+    plate = models.CharField(validators=[plate_regex], max_length=9)
     status = models.BooleanField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
     def get_week_dates(self):
         year, week = self.week.split('-W')
         
-        first_day_of_week = datetime.strptime(f'{year}-W{week}-1', "%Y-W%W-%w")
+        first_day_of_week = datetime.datetime.strptime(f'{year}-W{week}-1', "%Y-W%W-%w")
         
         start_date = first_day_of_week
-        end_date = start_date + timedelta(days=6)
+        end_date = start_date + datetime.timedelta(days=6)
+
         
         return f"{start_date.strftime('%d/%m')} - {end_date.strftime('%d/%m')} {start_date.year}"
 
@@ -147,10 +150,13 @@ class Schedule(models.Model):
 
 class Collection(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.PROTECT)
-    client = models.ForeignKey(Client, on_delete=models.PROTECT)
+    client = models.ForeignKey(Clients, on_delete=models.PROTECT)
     approved_by = models.ForeignKey(User, on_delete=models.SET(set_default_user))
     status = models.BooleanField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [UniqueConstraint(fields=['schedule', 'client'], name='unique_collection_combination')]
 
     def __str__(self):
         return f"{self.schedule} - {self.client} - {self.status}"
@@ -160,7 +166,7 @@ class Overflow(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='overflow/', null=True, blank=True)
     status = models.BooleanField(default=0)
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
+    client = models.ForeignKey(Clients, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f"{self.location} - {self.date} - {self.status}"
@@ -170,7 +176,7 @@ from django.db import models
 class Feedback(models.Model):
     email = models.EmailField(max_length=100)
     message = models.TextField()
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
+    client = models.ForeignKey(Clients, on_delete=models.CASCADE, null=True, blank=True)
     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])  # Rating between 1 and 5
     post_status = models.BooleanField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

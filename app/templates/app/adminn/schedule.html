@@ -3,23 +3,30 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Dashboard</h1>
+                        <h1 class="mt-4">Schedules</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item"><a href="{% url 'admin-home' %}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Schedule</li>
                         </ol>
+{% include 'adminn/includes/errors.html' %}
+                        
                         <div class="card mb-4">
                             <div class="card-header">
-                                <i class="fas fa-table me-1"></i>
+                                <i class="fas fa-plus-circle me-1"></i>
                                 New Client
                             </div>
 
                             <div class="card-body">
                                 <form method="POST" class="row">
                                     {% csrf_token %}
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                       <label for="week" class="form-label">Week:</label>
                                       {{ form.week }}
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label for="day" class="form-label">Day:</label>
+                                        {{ form.day }}
                                     </div>
 
                                     <div class="col-md-3">
@@ -32,7 +39,7 @@
                                         {{ form.driver }}
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label for="plate" class="form-label">Vehicle:</label>
                                         {{ form.plate }}
                                     </div>
@@ -44,6 +51,63 @@
 
                             </div>
                         </div>
+                        
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                All Schedules
+                            </div>
+                            <div class="card-body">
+                              <table id="datatablesSimple">
+                                <thead>
+                                    <tr>
+                                        <th>Location</th>
+                                        <th>Week</th>
+                                        <th>Day</th>
+                                        <th>Driver</th>
+                                        <th>Truck</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Location</th>
+                                        <th>Week</th>
+                                        <th>Day</th>
+                                        <th>Driver</th>
+                                        <th>Truck</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    {% for schedule in schedules %}
+                                    <tr>
+                                        <td>{{ schedule.location }}</td>
+                                        <td>{{ schedule.week }} ({{ schedule.get_week_dates }})</td>
+                                        <td>{{ schedule.day }}</td>
+                                        <td>{{ schedule.driver }}</td>
+                                        <td>{{ schedule.plate }}</td>
+                                        {%  if schedule.status %}
+                                            <td class="text-success"><i class="fa fa-check-square text-success"></i> Complite &nbsp; &nbsp;<a href="{% url 'change-schedule' schedule.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
+                                        {% else %}
+                                            <td class="bg-warning"><i class="fa fa-exclamation-circle text-warning"></i> Incomplite &nbsp; &nbsp;<a href="{% url 'change-schedule' schedule.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
+                                        {% endif %}
+                                        <td>{{ schedule.created_at | timesince  }}</td>
+                                        <td>
+                                            {%  if not schedule.status %}
+                                                &nbsp; &nbsp; &nbsp;<a href="{% url 'edit-schedule' schedule.id %}"><i class="fa fa-pen"></i></a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                              </table>
+                              </div>
+                          </div>
                         
                         
                     </div>

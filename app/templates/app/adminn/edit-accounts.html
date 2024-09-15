@@ -1,0 +1,122 @@
+{% load static %}
+{% include 'adminn/includes/header.html' %}
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Dashboard</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item "><a href="{% url 'admin-home' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item "><a href="{% url 'accounts' %}">Accounts</a></li>
+                            <li class="breadcrumb-item active">Edit</li>
+                        </ol>
+                        {% include 'adminn/includes/errors.html' %}
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-plus-circle me-1"></i>
+                               New User
+                            </div>
+
+                            <div class="card-body">
+                                <form method="POST" class="row">
+                                    {% csrf_token %}
+                                    <div class="col-md-2">
+                                      <label for="username" class="form-label">Username:</label>
+                                      {{ form.username }}
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label for="first_name" class="form-label">Firstname:</label>
+                                        {{ form.first_name }}
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label for="last_name" class="form-label">last name:</label>
+                                        {{ form.last_name }}
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label for="email" class="form-label">Email:</label>
+                                        {{ form.email }}
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label for="phone_number" class="form-label">Phone Number:</label>
+                                        {{ form.phone_number }}
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="role" class="form-label">Role:</label>
+                                        {{ form.role }}
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label for="password" class="form-label">Password:</label>
+                                        {{ form.password }}
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label for="is_active" class="form-label">Is Active:</label><br>
+                                        {{ form.is_active }}
+                                    </div>
+
+                                    <div class="col-md-12 mt-3">
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
+                                      </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                All Accounts
+                            </div>
+                            <div class="card-body">
+                              <table id="datatablesSimple">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Firstname</th>
+                                        <th>Lastname</th>
+                                        <th>Phone</th>
+                                        <th>Role</th>
+                                        <th>Is Active</th>
+                                        <th>Last login</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Firstname</th>
+                                        <th>Lastname</th>
+                                        <th>Phone</th>
+                                        <th>Role</th>
+                                        <th>Is Active</th>
+                                        <th>Last login</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    {% for user in users %}
+                                        <tr>
+                                            <td>{{ user.username }}</td>
+                                            <td>{{ user.email }}</td>
+                                            <td>{{ user.first_name }}</td>
+                                            <td>{{ user.last_name }}</td>
+                                            <td>{{ user.phone_number }}</td>
+                                            <td>{{ user.role }}</td>
+                                            <td>{{ user.is_active }}</td>
+                                            <td>{{ user.last_login | timesince}}</td>
+                                            <td>&nbsp &nbsp<a href="{% url 'edit-accounts'  user.id %}"><i class="fa fa-pen"></i></a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                              </table>
+                              </div>
+                          </div>
+                    </div>
+                </main>
+{% include 'adminn/includes/footer.html' %}

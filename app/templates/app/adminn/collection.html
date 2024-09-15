@@ -3,24 +3,24 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Dashboard</h1>
+                        <h1 class="mt-4">Collections</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item"><a href="{% url 'admin-home' %}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Collections</li>
                         </ol>
+{% include 'adminn/includes/errors.html' %}
+
                         <div class="card mb-4">
                             <div class="card-header">
-                                <i class="fas fa-table me-1"></i>
+                                <i class="fas fa-plus-circle me-1"></i>
                                 New Colletion
                             </div>
 
                             <div class="card-body">
                                 <form method="POST" class="row">
                                     {% csrf_token %}
-                                    <div class="col-md-3">
-                                      <label for="schedule" class="form-label">Schedule:</label>
-                                      {{ form.schedule }}
-                                    </div>
+
+
 
                                     <div class="col-md-3">
                                         <label for="client" class="form-label">Client:</label>
@@ -28,8 +28,8 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label for="approved_by" class="form-label">Approved By:</label>
-                                        {{ form.approved_by }}
+                                      <label for="schedule" class="form-label">Schedule:</label>
+                                      {{ form.schedule }}
                                     </div>
 
                                     <div class="col-md-3">
@@ -44,8 +44,54 @@
 
                             </div>
                         </div>
-                        
-                        
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                All Collections
+                            </div>
+                            <div class="card-body">
+                            <table id="datatablesSimple">
+                              <thead>
+                                  <tr>
+                                      <th>Schedule</th>
+                                      <th>Client</th>
+                                      <th>Approved by</th>
+                                      <th>Status</th>
+                                      <th>Created</th>
+                                      <th>Invoice</th>
+                                </tr>
+                              </thead>
+                              <tfoot>
+                                <tr>
+                                    <th>Schedule</th>
+                                    <th>Client</th>
+                                    <th>Approved by</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Invoice</th>
+                                </tr>
+                              </tfoot>
+                              <tbody>
+                                  {% for collection in collections %}
+                                  <tr>
+                                      <td>{{ collection.schedule }}</td>
+                                      <td>{{ collection.client }}</td>
+                                      <td>{{ collection.approved_by }}</td>
+                                      <td>{{ collection.created_at | timesince  }}</td>
+                                      {%  if collection.status %}
+                                            <td class="text-success"><i class="fas fa-check-square text-success"></i> Complite &nbsp; &nbsp;<a href="{% url 'change-collection' collection.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
+                                            <td> <a href="{% url 'invoice' collection.id %}"><i class="fas fa-print"></i> Invoice </a></td>
+                                        {% else %}
+                                            <td class="text-warning"><i class="fas fa-exclamation-circle text-warning" ></i> Incomplite &nbsp; &nbsp;<a href="{% url 'change-collection' collection.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
+                                        {% endif %}
+                                  </tr>
+                                  {% endfor %}
+                              </tbody>
+                            </table>
+                            </div>
+                            </div>
+                            </div>
+                        </div>
                     </div>
                 </main>
 {% include 'adminn/includes/footer.html' %}
