@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from functools import wraps 
 import datetime
+from datetime import datetime, timedelta
 from django.contrib.auth.hashers import make_password
 from twilio.rest import Client
 from django.db import IntegrityError
@@ -13,6 +14,9 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from .models import User, Location, Residence, Clients, Schedule, Collection, Feedback, Overflow, District, Sector, Cell, Village
+from django.db.models.functions import Cast
+from django.db.models import DateField
+
 # Create your views here.
 
 def role_required(allowed_roles):
@@ -78,7 +82,14 @@ def logoutuser(request):
 
 @role_required(['ADMIN'])
 def adminhome(request):
-    return render(request, 'adminn/index.html')
+    collections = Collection.objects.all().order_by('-created_at')[:5]
+    upcoming_schedules = get_upcoming_schedules()
+    residences = Residence.objects.all().count()
+    clients = Clients.objects.all().count()
+    users = User.objects.filter(role="MCOLLECTOR").count()
+    locations = Location.objects.all().count()
+    context = {'shcedules': upcoming_schedules, 'collections': collections, 'locations': locations, 'residences': residences, 'clients': clients, 'users': users}
+    return render(request, 'adminn/index.html', context)
 
 
 
@@ -486,7 +497,7 @@ def sendSms(theBody, theTo):
     client = Client(account_sid, auth_token)
 
     message = client.messages.create(
-    from_= os.getenv('DJANGO_SMS_FROM_NUMBER')
+    from_= os.getenv('DJANGO_SMS_FROM_NUMBER'),
     body= theBody,
     to= theTo
     )
@@ -498,13 +509,30 @@ def send_invoice_email(collection):
     from_email = settings.EMAIL_HOST_USER
     to = [collection.client.email]
 
-    # Render the HTML email with the context
     html_content = render_to_string('invoice.html', {'collection': collection})
-    text_content = strip_tags(html_content)  # Create a plain text version by stripping HTML tags
+    text_content = strip_tags(html_content)
 
-    # Create the email object
     email = EmailMultiAlternatives(subject, text_content, from_email, to)
     email.attach_alternative(html_content, "text/html")  # Attach HTML content
 
-    # Send the email
     email.send()
+
+def get_upcoming_schedules():
+    all_schedules = Schedule.objects.all()
+    
+    upcoming_schedules = []
+    for schedule in all_schedules:
+        try:
+            year, week_number = schedule.week.split('-W')
+            
+            schedule_start_date = datetime.strptime(f'{year}-W{week_number}-1', "%Y-W%W-%w")
+            
+            if schedule_start_date >= datetime.now():
+                upcoming_schedules.append((schedule_start_date, schedule))
+        except ValueError:
+            continue
+
+
+    upcoming_schedules.sort(key=lambda x: x[0])
+
+    return [schedule for _, schedule in upcoming_schedules[:5]]

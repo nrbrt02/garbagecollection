@@ -10,36 +10,53 @@
                         <div class="row">
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Primary Card</div>
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <span>Locations</span>
+                                        <span class="badge bg-warning text-dark">{{ locations }}</span>
+                                    </div>
+                            
                                     <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
+                                        <a class="small text-white stretched-link" href="{% url 'locations' %}">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="col-xl-3 col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">Warning Card</div>
+                                <div class="card bg-secondary text-white mb-4">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <span>Residences</span>
+                                        <span class="badge bg-info text-dark">{{ residences }}</span>
+                                    </div>
+                            
                                     <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
+                                        <a class="small text-white stretched-link" href="{% url 'residence' %}">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-success text-white mb-4">
-                                    <div class="card-body">Success Card</div>
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <span>Clients</span>
+                                        <span class="badge bg-dark text-light">{{ clients }}</span>
+                                    </div>
+                            
                                     <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
+                                        <a class="small text-white stretched-link" href="{% url 'clients' %}">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
-                                <div class="card bg-danger text-white mb-4">
-                                    <div class="card-body">Danger Card</div>
+                                <div class="card bg-dark text-white mb-4">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <span>Money Collectors</span>
+                                        <span class="badge bg-danger text-light">{{ users }}</span>
+                                    </div>
+                            
                                     <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
+                                        <a class="small text-white stretched-link" href="{% url 'clients' %}">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                     </div>
                                 </div>
@@ -74,36 +91,51 @@
                                 <table id="datatablesSimple">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
+                                            <th>Location</th>
+                                            <th>Week</th>
+                                            <th>Day</th>
+                                            <th>Driver</th>
+                                            <th>Truck</th>
+                                            <th>Status</th>
+                                            <th>Created</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
+                                            <th>Location</th>
+                                            <th>Week</th>
+                                            <th>Day</th>
+                                            <th>Driver</th>
+                                            <th>Truck</th>
+                                            <th>Status</th>
+                                            <th>Created</th>
+                                            <th>Action</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
+                                        {% for schedule in shcedules %}
                                         <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>System Architect</td>
-                                            <td>Edinburgh</td>
-                                            <td>61</td>
-                                            <td>2011/04/25</td>
-                                            <td>$320,800</td>
+                                            <td>{{ schedule.location }}</td>
+                                            <td>{{ schedule.week }} ({{ schedule.get_week_dates }})</td>
+                                            <td>{{ schedule.day }}</td>
+                                            <td>{{ schedule.driver }}</td>
+                                            <td>{{ schedule.plate }}</td>
+                                            {%  if schedule.status %}
+                                                <td class="text-success"><i class="fa fa-check-square text-success"></i> Complite &nbsp; &nbsp;<a href="{% url 'change-schedule' schedule.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
+                                            {% else %}
+                                                <td class="bg-warning"><i class="fa fa-exclamation-circle text-warning"></i> Incomplite &nbsp; &nbsp;<a href="{% url 'change-schedule' schedule.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
+                                            {% endif %}
+                                            <td>{{ schedule.created_at | timesince  }}</td>
+                                            <td>
+                                                {%  if not schedule.status %}
+                                                    &nbsp; &nbsp; &nbsp;<a href="{% url 'edit-schedule' schedule.id %}"><i class="fa fa-pen"></i></a>
+                                                {% endif %}
+                                            </td>
                                         </tr>
-                                        
+                                        {% endfor %}
                                     </tbody>
-                                </table>
+                                  </table>
                             </div>
                         </div>
 
@@ -116,36 +148,41 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
-                                        </tr>
+                                            <th>Schedule</th>
+                                            <th>Client</th>
+                                            <th>Approved by</th>
+                                            <th>Status</th>
+                                            <th>Created</th>
+                                            <th>Invoice</th>
+                                      </tr>
                                     </thead>
                                     <tfoot>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
-                                        </tr>
+                                      <tr>
+                                          <th>Schedule</th>
+                                          <th>Client</th>
+                                          <th>Approved by</th>
+                                          <th>Status</th>
+                                          <th>Created</th>
+                                          <th>Invoice</th>
+                                      </tr>
                                     </tfoot>
                                     <tbody>
+                                        {% for collection in collections %}
                                         <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>System Architect</td>
-                                            <td>Edinburgh</td>
-                                            <td>61</td>
-                                            <td>2011/04/25</td>
-                                            <td>$320,800</td>
+                                            <td>{{ collection.schedule }}</td>
+                                            <td>{{ collection.client }}</td>
+                                            <td>{{ collection.approved_by }}</td>
+                                            <td>{{ collection.created_at | timesince  }}</td>
+                                            {%  if collection.status %}
+                                                  <td class="text-success"><i class="fas fa-check-square text-success"></i> Complite &nbsp; &nbsp;<a href="{% url 'change-collection' collection.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
+                                                  <td> <a href="{% url 'invoice' collection.id %}"><i class="fas fa-print"></i> Invoice </a></td>
+                                              {% else %}
+                                                  <td class="text-warning"><i class="fas fa-exclamation-circle text-warning" ></i> Incomplite &nbsp; &nbsp;<a href="{% url 'change-collection' collection.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
+                                              {% endif %}
                                         </tr>
-                                        
+                                        {% endfor %}
                                     </tbody>
-                                </table>
+                                  </table>
                             </div>
                         </div>
                     </div>
