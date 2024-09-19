@@ -20,5 +20,29 @@
 <script src="{% static 'adminn/assets/demo/chart-bar-demo.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
 <script src="{% static 'adminn/js/datatables-simple-demo.js' %}"></script>
+
+<script>
+    const ctx2 = document.getElementById('myAreaChart');
+    
+    new Chart(ctx2, {
+      type: 'pie',
+      data: {
+        labels: [{% for appt in appt_list %} "{{ appt }}", {% endfor %} ],
+        datasets: [{
+          data: [{% for numbers in appt_numbers %} "{{ numbers }}", {% endfor %} ],
+          borderWidth: 1,
+        }]
+      },
+      options: {
+          plugins: {
+              title: {
+                  display: true,
+                  text: 'Appointments Statistics'
+              }
+          }
+      }
+    
+    });
+</script>
 </body>
 </html>

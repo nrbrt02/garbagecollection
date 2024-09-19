@@ -1,5 +1,10 @@
 {% load static %}
-{% include 'adminn/includes/header.html' %}
+{% if request.user.role == "ADMIN" %}
+
+    {% include 'adminn/includes/header.html' %}
+{% else %}
+    {% include 'mcollector/includes/header.html' %}
+{% endif %}
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
@@ -23,40 +28,40 @@
                         {% endfor %}
                         {% endif %}
                         
+                        {% if request.user.role == "ADMIN" %}
+                          <div class="card mb-4">
+                              <div class="card-header">
+                                  <i class="fas fa-plus-circle me-1"></i>
+                                  New Location
+                              </div>
 
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <i class="fas fa-plus-circle me-1"></i>
-                                New Location
-                            </div>
+                              <div class="card-body">
 
-                            <div class="card-body">
-
-                                    <form class="row" method="post">
-                                      {% csrf_token %}
+                                      <form class="row" method="post">
+                                        {% csrf_token %}
+                                        <div class="col-md-3">
+                                          <label for="district" class="form-label">District:</label>
+                                          {{ form.district }}
+                                        </div>
+                                        <div class="col-md-3">
+                                          <label for="sector" class="form-label">Sector:</label>
+                                          {{ form.sector }}
+                                        </div>
                                       <div class="col-md-3">
-                                        <label for="district" class="form-label">District:</label>
-                                        {{ form.district }}
-                                      </div>
-                                      <div class="col-md-3">
-                                        <label for="sector" class="form-label">Sector:</label>
-                                        {{ form.sector }}
-                                      </div>
-                                     <div class="col-md-3">
-                                        <label for="cell" class="form-label">Cell:</label>
-                                        {{ form.cell }}
-                                      </div>
-                                      <div class="col-md-3">
-                                        <label for="village" class="form-label">Village:</label>
-                                        {{ form.village }}
-                                      </div>
-                                      <div class="col-md-12 mt-3">
-                                        <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
-                                      </div>
-                                    </form>
-                            </div>
-                        </div>
-
+                                          <label for="cell" class="form-label">Cell:</label>
+                                          {{ form.cell }}
+                                        </div>
+                                        <div class="col-md-3">
+                                          <label for="village" class="form-label">Village:</label>
+                                          {{ form.village }}
+                                        </div>
+                                        <div class="col-md-12 mt-3">
+                                          <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
+                                        </div>
+                                      </form>
+                              </div>
+                          </div>
+                        {% endif %}
                         <div class="card mb-4">
                           <div class="card-header">
                               <i class="fas fa-table me-1"></i>

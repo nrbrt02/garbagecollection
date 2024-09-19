@@ -113,7 +113,7 @@ def logoutuser(request):
     logout(request)  # This logs out the user
     return redirect('home')
 
-@role_required(['ADMIN'])
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def adminhome(request):
     collections = Collection.objects.all().order_by('-created_at')[:5]
     upcoming_schedules = get_upcoming_schedules()
@@ -127,7 +127,7 @@ def adminhome(request):
 
 
 
-@role_required(['ADMIN'])
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def locations(request):
     locations = Location.objects.all()
     if request.method == 'POST':
@@ -179,7 +179,7 @@ def load_villages(request):
     villages = Village.objects.filter(cell_id = cell_id)
     return render(request, "adminn/villages_options.html", {'villages': villages})
 
-@role_required(['ADMIN'])
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def residence(request):
     residences = Residence.objects.all()
     if request.method == 'POST':
@@ -197,7 +197,7 @@ def residence(request):
     return render(request, 'adminn/residence.html', context)
 
 
-@login_required
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def changeResidence(request, pk):
     residence = Residence.objects.get(id=pk)
     residences = Residence.objects.all()
@@ -213,7 +213,7 @@ def changeResidence(request, pk):
     return redirect("residence")
 
 
-@role_required(['ADMIN'])
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def editResidence(request, pk):
     residences = Residence.objects.all()
     resident = Residence.objects.get(id=pk)
@@ -233,7 +233,7 @@ def editResidence(request, pk):
     return render(request, 'adminn/edit-residence.html', context)
 
 
-@role_required(['ADMIN'])
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def clients(request):
     clients = Clients.objects.all()
     if request.method == 'POST':
@@ -254,7 +254,7 @@ def clients(request):
 def searchClient(request, email):
     clients = Clients.objects.get(email=email)
     
-@role_required(['ADMIN'])
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def editClient(request, pk):
     client = Clients.objects.get(id=pk)
     clients = Clients.objects.all()
@@ -273,9 +273,9 @@ def editClient(request, pk):
     return render(request, 'adminn/edit-clients.html', context)
 
 
-@login_required
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def changeClient(request, pk):
-    client = Client.objects.get(id=pk)
+    client = Clients.objects.get(id=pk)
 
     if client.is_active:
         client.is_active = False
@@ -288,7 +288,7 @@ def changeClient(request, pk):
     return redirect("clients")
 
 
-@role_required(['ADMIN'])
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def schedule(request):
     schedules = Schedule.objects.all()
     if request.method == 'POST':
@@ -352,7 +352,7 @@ def load_schedule(request):
     return render(request, "adminn/schedule_options.html", {'schedules': schedules})
 
 
-@login_required
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def collection(request):
     collections = Collection.objects.all().order_by('-created_at')
     try:
@@ -385,7 +385,7 @@ def collection(request):
     context = {'form': form, 'collections': collections}
     return render(request, 'adminn/collection.html', context)
 
-@login_required
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def changeCollection(request, pk):
     collection = Collection.objects.get(id=pk)
 
@@ -400,13 +400,13 @@ def changeCollection(request, pk):
     return redirect("collection")
 
 
-@role_required(['ADMIN'])
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def overflow(request):
     overflows = Overflow.objects.all()
     context = {'overflows': overflows}
     return render(request, 'adminn/overflow.html', context)
 
-@role_required(['ADMIN'])
+@role_required(['ADMIN', 'MCOLLECTOR'])
 def statusOverflow(request, pk):
     overflow = Overflow.objects.get(id=pk)
 
@@ -514,15 +514,6 @@ def invoice(request, pk):
 @role_required(['MCOLLECTOR'])
 def mcollectorhome(request):
     return render(request, 'mcollector/index.html')
-
-
-def empty(request):
-    return render(request, 'adminn/empty.html')
-
-
-
-
-
 
 
 def sendSms(theBody, theTo):

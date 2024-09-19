@@ -1,6 +1,12 @@
 {% load static %}
-{% include 'adminn/includes/header.html' %}
-            <div id="layoutSidenav_content">
+
+{% if request.user.role == "ADMIN" %}
+    {% include 'adminn/includes/header.html' %}
+{% else %}
+    {% include 'mcollector/includes/header.html' %}
+{% endif %}
+
+<div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Dashboard</h1>
@@ -121,17 +127,23 @@
                                             <td>{{ schedule.day }}</td>
                                             <td>{{ schedule.driver }}</td>
                                             <td>{{ schedule.plate }}</td>
-                                            {%  if schedule.status %}
-                                                <td class="text-success"><i class="fa fa-check-square text-success"></i> Complite &nbsp; &nbsp;<a href="{% url 'change-schedule' schedule.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
-                                            {% else %}
-                                                <td class="bg-warning"><i class="fa fa-exclamation-circle text-warning"></i> Incomplite &nbsp; &nbsp;<a href="{% url 'change-schedule' schedule.id %}"><i class="fa fa-arrow-right"></i> Change </a></td>
-                                            {% endif %}
-                                            <td>{{ schedule.created_at | timesince  }}</td>
-                                            <td>
-                                                {%  if not schedule.status %}
-                                                    &nbsp; &nbsp; &nbsp;<a href="{% url 'edit-schedule' schedule.id %}"><i class="fa fa-pen"></i></a>
+                                            <td>{%  if schedule.status %} 
+                                                    <i class="fa fa-check-square text-success"></i> Complite &nbsp; &nbsp;
+                                                {% else %}
+                                                    <i class="fa fa-exclamation-circle text-warning"></i> Incomplite &nbsp; &nbsp;
+                                                {% endif %}
+                                                {% if request.user.role == "ADMIN" %}
+                                                    <a href="{% url 'change-schedule' schedule.id %}"><i class="fa fa-arrow-right"></i> Change </a>
                                                 {% endif %}
                                             </td>
+                                            <td>{{ schedule.created_at | timesince  }}</td>
+                                            {%  if not schedule.status and request.user.role == "ADMIN" %}
+                                                <td>
+                                                    &nbsp; &nbsp; &nbsp;<a href="{% url 'edit-schedule' schedule.id %}"><i class="fa fa-pen"></i></a>
+                                                </td>
+                                            {% else %}
+                                                <td></td>
+                                            {% endif %}
                                         </tr>
                                         {% endfor %}
                                     </tbody>

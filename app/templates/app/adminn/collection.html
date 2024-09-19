@@ -1,5 +1,10 @@
 {% load static %}
-{% include 'adminn/includes/header.html' %}
+
+{% if request.user.role == "ADMIN" %}
+    {% include 'adminn/includes/header.html' %}
+{% else %}
+    {% include 'mcollector/includes/header.html' %}
+{% endif %}
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
@@ -8,7 +13,7 @@
                             <li class="breadcrumb-item"><a href="{% url 'admin-home' %}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Collections</li>
                         </ol>
-{% include 'adminn/includes/errors.html' %}
+                    {% include 'adminn/includes/errors.html' %}
 
                         <div class="card mb-4">
                             <div class="card-header">
@@ -93,5 +98,6 @@
                             </div>
                         </div>
                     </div>
+                    
                 </main>
 {% include 'adminn/includes/footer.html' %}

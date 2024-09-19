@@ -49,6 +49,6 @@ urlpatterns = [
     
     path('login/', views.loginuser, name="login"),
     path('logout/', views.logoutuser, name="logoutuser"),
-    path('adminn/empty', views.empty, name="admin-empty"),
+    # path('adminn/empty', views.empty, name="admin-empty"),
 
 ]
