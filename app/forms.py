@@ -1,5 +1,5 @@
 from django import forms
-from .models import Location, Residence, Clients, Schedule, Collection, District, Sector, Cell, Village, User
+from .models import Location, Residence, Clients, Schedule, Collection, District, Sector, Cell, Village, User, Overflow, Feedback
 import datetime
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'inputEmail'}))
@@ -178,3 +178,34 @@ class EditAccountForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EditAccountForm, self).__init__(*args, **kwargs)
         self.fields['password'].required = False
+
+class ClientSelfForm(forms.ModelForm):
+        class Meta:
+            model = Clients
+            fields = '__all__'
+            exclude = ['is_active']
+            widgets = {
+                'names': forms.TextInput(attrs={'class': 'form-control'}),
+                'phone': forms.TextInput(attrs={'class': 'form-control'}),
+                'email': forms.EmailInput(attrs={'class': 'form-control'}),
+                'residence': forms.Select(attrs={'class': 'form-control'}),
+                # 'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
+            }
+
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = '__all__'
+        exclude = ['post_status']
+        widgets = {
+                'email': forms.EmailInput(attrs={'class': 'form-control', 'hx-get': 'load-client/','hx-target': '#id_client'}),
+                'client': forms.Select(attrs={'class': 'form-control', 'disabled': 'disabled'}),
+                'message': forms.Textarea(attrs={'class': 'form-control'}),
+                'rating': forms.Select(attrs={'class': 'form-control'}, choices=[(i, i) for i in range(1, 6)]),  # Ratings from 1 to 5
+
+        }
+
+
+

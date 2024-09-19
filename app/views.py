@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import LoginForm, LocationsForm, ResidenceForm, ClientForm, ScheduleForm, CollectionForm, EditResidenceForm, CreateAccountForm, EditAccountForm
+from .forms import LoginForm, LocationsForm, ResidenceForm, ClientForm, ScheduleForm, CollectionForm, EditResidenceForm, CreateAccountForm, EditAccountForm, ClientSelfForm, FeedbackForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -31,8 +31,41 @@ def role_required(allowed_roles):
 
 
 def home(request):
-    return render(request, 'index.html')
+    client_form = ClientSelfForm(request.POST or None)
+    feedback_form = FeedbackForm(request.POST or None)
 
+    if request.method == 'POST':
+        # Check which form was submitted
+        if 'client_registration' in request.POST:
+            if client_form.is_valid():
+                client = client_form.save()
+                send_mail(
+                    "Welcome to Garbage Collection",
+                    f"Your Email was registered at the garbage collection website.\nWelcome to our community as we keep our homes clean.\nThank you!",
+                    settings.EMAIL_HOST_USER,
+                    [client.email]
+                )
+                messages.success(request, "You have been registered successfully.")
+                return redirect("home")  # Redirect to clear POST data and avoid resubmission
+            else:
+                messages.error(request, f"{client_form.errors}")
+        
+        elif 'feedback_submission' in request.POST:
+            if feedback_form.is_valid():
+                # Assume feedback is linked to a client, if needed, use additional logic here
+                feedback = feedback_form.save(commit=False)
+                feedback.client = Clients.objects.get(email=request.POST.get('client_email'))  # Modify this as needed
+                feedback.save()
+                messages.success(request, "Your feedback has been submitted successfully!")
+                return redirect("home")
+            else:
+                messages.error(request, f"{feedback_form.errors}")
+
+    context = {
+        'client_form': client_form,
+        'feedback_form': feedback_form,
+    }
+    return render(request, 'index.html', context)
 
 def forbidenpage(request):
     return render(request, '401.html')
@@ -218,7 +251,9 @@ def clients(request):
     context = {'form': form, 'clients': clients}
     return render(request, 'adminn/clients.html', context)
 
-
+def searchClient(request, email):
+    clients = Clients.objects.get(email=email)
+    
 @role_required(['ADMIN'])
 def editClient(request, pk):
     client = Clients.objects.get(id=pk)

@@ -21,6 +21,7 @@ urlpatterns = [
 
     path('clients/', views.clients, name="clients"),
     path('clients/edit/<int:pk>', views.editClient, name="edit-client"),
+    path('clients/search/<str:email>', views.searchClient, name="search-client"),
     path('clients/status/<int:pk>', views.changeClient, name="change-clients"),
 
     path('schedule/', views.schedule, name="schedule"),
