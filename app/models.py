@@ -171,7 +171,6 @@ class Overflow(models.Model):
     def __str__(self):
         return f"{self.location} - {self.date} - {self.status}"
 
-from django.db import models
 
 class Feedback(models.Model):
     email = models.EmailField(max_length=100)

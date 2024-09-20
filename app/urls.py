@@ -4,6 +4,9 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name="home"),
+    path('send-feedback', views.sendFeedback, name="send-feedback"),
+    path('self-registration', views.selfRegistration, name="self-registration"),
+    path('report-overflow', views.reportOverflow, name="report-overflow"),
     path('forbiden', views.forbidenpage, name="403"),
 
 

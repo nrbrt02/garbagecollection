@@ -198,14 +198,21 @@ class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = '__all__'
-        exclude = ['post_status']
+        exclude = ['post_status', 'client']
         widgets = {
-                'email': forms.EmailInput(attrs={'class': 'form-control', 'hx-get': 'load-client/','hx-target': '#id_client'}),
-                'client': forms.Select(attrs={'class': 'form-control', 'disabled': 'disabled'}),
+                'email': forms.EmailInput(attrs={'class': 'form-control'}),
                 'message': forms.Textarea(attrs={'class': 'form-control'}),
                 'rating': forms.Select(attrs={'class': 'form-control'}, choices=[(i, i) for i in range(1, 6)]),  # Ratings from 1 to 5
 
         }
 
+
+class OverflowForm(forms.ModelForm):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}))
+    # location = forms.ModelChoiceField(queryset=Location.objects.all(),widget=forms.Select(attrs={'class': 'form-control'}),empty_label="Select a location")
+    image = forms.FileField(widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
+    class Meta:
+        model = Overflow
+        fields = ['email', 'image']
 
 
