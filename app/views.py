@@ -16,6 +16,7 @@ from django.utils.html import strip_tags
 from .models import User, Location, Residence, Clients, Schedule, Collection, Feedback, Overflow, District, Sector, Cell, Village
 from django.db.models.functions import Cast
 from django.db.models import DateField
+from collections import defaultdict
 
 # Create your views here.
 
@@ -115,13 +116,30 @@ def logoutuser(request):
 
 @role_required(['ADMIN', 'MCOLLECTOR'])
 def adminhome(request):
+    clients1 = Clients.objects.all()
+    formatted_dates = []
+    client_count_per_month = defaultdict(int)
+    for client in clients1:
+        formatted_date = client.created_at.strftime('%B-%Y')
+        formatted_dates.append(formatted_date)
+        client_count_per_month[formatted_date] += 1
+
+    client_count_list = list(client_count_per_month.values())
+
+
     collections = Collection.objects.all().order_by('-created_at')[:5]
     upcoming_schedules = get_upcoming_schedules()
     residences = Residence.objects.all().count()
     clients = Clients.objects.all().count()
     users = User.objects.filter(role="MCOLLECTOR").count()
     locations = Location.objects.all().count()
-    context = {'shcedules': upcoming_schedules, 'collections': collections, 'locations': locations, 'residences': residences, 'clients': clients, 'users': users}
+    schedules = Schedule.objects.all().count()
+    collection = Collection.objects.all().count()
+
+    glist = ["Clients", "Locations", "Residences", "Schedules", "Collections"]
+    numbers = [clients, locations, residences, schedules, collection]
+
+    context = {'shcedules': upcoming_schedules, 'collections': collections, 'locations': locations, 'residences': residences, 'clients': clients, 'users': users, 'glist': glist, 'numbers': numbers, 'formatted_dates': formatted_dates, 'client_count_list': client_count_list}
     return render(request, 'adminn/index.html', context)
 
 
